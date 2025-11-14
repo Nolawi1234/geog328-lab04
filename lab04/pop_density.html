@@ -47,6 +47,38 @@
       margin: 0;
       font-size: 13px;
     }
+
+    /* Legend styles */
+    .legend {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: white;
+      padding: 8px 10px;
+      border-radius: 4px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .legend-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-top: 2px;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+      border-radius: 2px;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
@@ -57,10 +89,13 @@
     <p>Hover over a state!</p>
   </div>
 
+  <!-- Legend box -->
+  <div id="legend" class="legend"></div>
+
   <!-- Mapbox GL JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <script>
-    // 🔑 PUT YOUR OWN MAPBOX TOKEN HERE
+    // 🔑 YOUR MAPBOX TOKEN
     mapboxgl.accessToken = "pk.eyJ1Ijoibm9sYXdpMjQiLCJhIjoiY21obW8yZWE5MmN2cjJscTE1am1sZnVmMiJ9.zLy0Qd4BNKLtusNXQYxWjw";
 
     const map = new mapboxgl.Map({
@@ -114,6 +149,25 @@
       });
 
       const info = document.getElementById("info");
+      const legend = document.getElementById("legend");
+
+      // Build legend to match the color ramp
+      legend.innerHTML = `
+        <div class="legend-title">Density (people / sq. mile)</div>
+      `;
+
+      const layers = ["0–10", "10–50", "50–100", "100–200", "200+"];
+      const colors = ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"];
+
+      layers.forEach((layer, i) => {
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.innerHTML = `
+          <span class="legend-color" style="background:${colors[i]}"></span>
+          <span>${layer}</span>
+        `;
+        legend.appendChild(item);
+      });
 
       // Hover interaction
       map.on("mousemove", "state-fills", (e) => {
